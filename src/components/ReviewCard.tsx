@@ -30,7 +30,7 @@ const ReviewCard = ({ review }: { review: Review }) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary">
-            {review.customer_name[0]}
+            {(review.customer_name || '?')[0]}
           </div>
           <div>
             <p className="text-sm font-medium text-foreground">{review.customer_name}</p>
