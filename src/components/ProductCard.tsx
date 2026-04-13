@@ -1,6 +1,8 @@
 import { Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import type { Product } from '@/data/mockData';
+import type { Tables } from '@/integrations/supabase/types';
+
+type Product = Tables<'products'>;
 
 const ProductCard = ({ product }: { product: Product }) => {
   return (
@@ -17,7 +19,7 @@ const ProductCard = ({ product }: { product: Product }) => {
           <div className="flex items-center gap-1">
             <Star className="h-4 w-4 fill-warning text-warning" />
             <span className="text-sm font-medium text-foreground">{product.rating}</span>
-            <span className="text-xs text-muted-foreground">({product.reviewCount})</span>
+            <span className="text-xs text-muted-foreground">({product.review_count})</span>
           </div>
         </div>
       </div>
