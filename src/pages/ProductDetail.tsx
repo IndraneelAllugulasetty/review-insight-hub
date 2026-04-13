@@ -1,15 +1,43 @@
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Star, Store } from 'lucide-react';
+import { ArrowLeft, Star, Store, Loader2 } from 'lucide-react';
 import CustomerNavbar from '@/components/CustomerNavbar';
 import ReviewForm from '@/components/ReviewForm';
 import ReviewCard from '@/components/ReviewCard';
-import { products, reviews } from '@/data/mockData';
+import { supabase } from '@/integrations/supabase/client';
+import type { Tables } from '@/integrations/supabase/types';
+
+type Product = Tables<'products'>;
+type Review = Tables<'reviews'>;
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const product = products.find(p => p.id === id);
-  const productReviews = reviews.filter(r => r.productId === id);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  const fetchReviews = useCallback(async () => {
+    if (!id) return;
+    const { data } = await supabase
+      .from('reviews')
+      .select('*')
+      .eq('product_id', id)
+      .order('created_at', { ascending: false });
+    if (data) setReviews(data);
+  }, [id]);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!id) return;
+      const { data } = await supabase.from('products').select('*').eq('id', id).single();
+      setProduct(data);
+      setLoading(false);
+    };
+    fetchProduct();
+    fetchReviews();
+  }, [id, fetchReviews]);
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
   if (!product) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Product not found</div>;
 
   return (
@@ -33,7 +61,7 @@ const ProductDetail = () => {
                   <div className="flex items-center gap-2">
                     <div className="flex">{Array.from({length:5}).map((_,i) => <Star key={i} className={`h-5 w-5 ${i < Math.round(product.rating) ? 'fill-warning text-warning' : 'text-border'}`}/>)}</div>
                     <span className="font-semibold text-foreground">{product.rating}</span>
-                    <span className="text-muted-foreground text-sm">({product.reviewCount} reviews)</span>
+                    <span className="text-muted-foreground text-sm">({product.review_count} reviews)</span>
                   </div>
                   <p className="text-2xl font-bold text-foreground">${product.price}</p>
                   <p className="text-sm text-muted-foreground leading-relaxed">{product.description}</p>
@@ -41,14 +69,14 @@ const ProductDetail = () => {
               </div>
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-foreground mb-4">Customer Reviews ({productReviews.length})</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">Customer Reviews ({reviews.length})</h2>
               <div className="space-y-4">
-                {productReviews.length ? productReviews.map(r => <ReviewCard key={r.id} review={r} />) : <p className="text-muted-foreground text-sm">No reviews yet. Be the first to review!</p>}
+                {reviews.length ? reviews.map(r => <ReviewCard key={r.id} review={r} />) : <p className="text-muted-foreground text-sm">No reviews yet. Be the first to review!</p>}
               </div>
             </div>
           </div>
           <div>
-            <ReviewForm productId={product.id} />
+            <ReviewForm productId={product.id} onReviewSubmitted={fetchReviews} />
           </div>
         </div>
       </main>
