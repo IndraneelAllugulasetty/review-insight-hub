@@ -14,7 +14,193 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      alerts: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          message: string
+          resolved: boolean
+          seller_id: string
+          seller_name: string
+          severity: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          id?: string
+          message: string
+          resolved?: boolean
+          seller_id: string
+          seller_name: string
+          severity: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          message?: string
+          resolved?: boolean
+          seller_id?: string
+          seller_name?: string
+          severity?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alerts_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          image: string
+          name: string
+          price: number
+          rating: number
+          review_count: number
+          seller: string
+          seller_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id: string
+          image: string
+          name: string
+          price: number
+          rating?: number
+          review_count?: number
+          seller: string
+          seller_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image?: string
+          name?: string
+          price?: number
+          rating?: number
+          review_count?: number
+          seller?: string
+          seller_id?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          aspects: Json | null
+          created_at: string
+          customer_name: string
+          date: string
+          emotions: string[] | null
+          fake_score: number | null
+          id: string
+          is_fake: boolean | null
+          product_id: string
+          rating: number
+          sentiment: string | null
+          text: string
+        }
+        Insert: {
+          aspects?: Json | null
+          created_at?: string
+          customer_name: string
+          date?: string
+          emotions?: string[] | null
+          fake_score?: number | null
+          id?: string
+          is_fake?: boolean | null
+          product_id: string
+          rating: number
+          sentiment?: string | null
+          text: string
+        }
+        Update: {
+          aspects?: Json | null
+          created_at?: string
+          customer_name?: string
+          date?: string
+          emotions?: string[] | null
+          fake_score?: number | null
+          id?: string
+          is_fake?: boolean | null
+          product_id?: string
+          rating?: number
+          sentiment?: string | null
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sellers: {
+        Row: {
+          avg_rating: number
+          created_at: string
+          id: string
+          monthly_data: Json | null
+          name: string
+          product_count: number
+          reputation_score: number
+          sentiment_breakdown: Json | null
+          status: string
+          top_complaints: string[] | null
+          total_reviews: number
+          trend: string
+          warning_count: number
+        }
+        Insert: {
+          avg_rating?: number
+          created_at?: string
+          id: string
+          monthly_data?: Json | null
+          name: string
+          product_count?: number
+          reputation_score?: number
+          sentiment_breakdown?: Json | null
+          status?: string
+          top_complaints?: string[] | null
+          total_reviews?: number
+          trend?: string
+          warning_count?: number
+        }
+        Update: {
+          avg_rating?: number
+          created_at?: string
+          id?: string
+          monthly_data?: Json | null
+          name?: string
+          product_count?: number
+          reputation_score?: number
+          sentiment_breakdown?: Json | null
+          status?: string
+          top_complaints?: string[] | null
+          total_reviews?: number
+          trend?: string
+          warning_count?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
